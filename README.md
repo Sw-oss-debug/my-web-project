@@ -1,6 +1,10 @@
 # NovaFlow - Next-Gen AI Customer Service & CRM Platform 🚀
 
-NovaFlow is a powerful, full-featured AI Customer Service and CRM Automation platform designed for businesses, e-commerce, and agencies to automate client support, track sales pipelines, and analyze operations seamlessly.
+由 Sw-oss-debug 開發。歡迎微型收購和部署合作。
+
+---
+
+NovaFlow is a powerful, full-featured AI Customer Service and CRM Automation platform designed for businesses to automate client support, track sales pipelines, and analyze operations seamlessly.
 
 ## 🔗 Live Demo
 Check out the fully deployed application here: 
