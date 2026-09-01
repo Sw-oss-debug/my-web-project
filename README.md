@@ -7,7 +7,7 @@ Developed by Sw-oss-debug. Open for micro-acquisition.
 
 ## 🔗 線上示範 / Live Demo
 點擊此處查看已完全部署的應用程式：
-👉 **[https://netlify.app](https://netlify.app)**
+👉 **[https://novaflow-ai-customer-service.netlify.app/](https://novaflow-ai-customer-service.netlify.app/)**
 
 ## ✨ 核心功能 / Core Features
 - **AI 客戶支援：** 全天候自動處理常見問題、訂單追蹤和線索分配。
