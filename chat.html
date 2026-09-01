@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NovaFlow AI 對話</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      body {
+        background: radial-gradient(circle at top left, rgba(124, 156, 255, 0.18), transparent 25%),
+          radial-gradient(circle at bottom right, rgba(142, 240, 212, 0.12), transparent 24%),
+          #07111f;
+      }
+
+      .chat-page-shell {
+        width: min(1100px, calc(100% - 28px));
+        margin: 32px auto 48px;
+      }
+
+      .chat-topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 18px;
+        padding: 16px 18px;
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 18px;
+        background: rgba(11, 20, 33, 0.8);
+        position: sticky;
+        top: 12px;
+        z-index: 10;
+        backdrop-filter: blur(18px);
+      }
+
+      .chat-topbar .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 800;
+      }
+
+      .chat-topbar nav {
+        display: flex;
+        gap: 18px;
+        color: var(--muted);
+      }
+
+      .chat-topbar a {
+        color: var(--muted);
+        text-decoration: none;
+      }
+
+      .chat-topbar a:hover {
+        color: var(--text);
+      }
+
+      .chat-layout {
+        display: grid;
+        grid-template-columns: 280px minmax(0, 1fr);
+        gap: 18px;
+      }
+
+      .side-panel,
+      .main-panel {
+        background: rgba(11, 20, 33, 0.82);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 22px;
+      }
+
+      .side-panel {
+        padding: 18px 16px;
+      }
+
+      .side-title {
+        margin-bottom: 14px;
+        font-size: 0.8rem;
+        color: var(--muted);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .side-actions {
+        display: grid;
+        gap: 10px;
+      }
+
+      .side-actions a,
+      .quick-button {
+        display: block;
+        width: 100%;
+        padding: 12px 14px;
+        border-radius: 12px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.05);
+        color: var(--text);
+        text-decoration: none;
+        text-align: left;
+      }
+
+      .quick-button {
+        cursor: pointer;
+      }
+
+      .side-actions .active {
+        background: rgba(124, 156, 255, 0.12);
+        border-color: rgba(124, 156, 255, 0.22);
+      }
+
+      .main-panel {
+        padding: 20px;
+      }
+
+      .chat-panel {
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 18px;
+        overflow: hidden;
+        background: rgba(10, 16, 28, 0.82);
+      }
+
+      .chat-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding: 18px 20px;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+      }
+
+      .chat-header strong {
+        display: block;
+        font-size: 1.1rem;
+      }
+
+      .chat-header small {
+        color: var(--muted);
+      }
+
+      .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 10px;
+        border-radius: 999px;
+        background: rgba(142, 240, 212, 0.12);
+        color: var(--accent);
+        font-size: 0.8rem;
+      }
+
+      .chat-body {
+        height: 520px;
+        padding: 20px;
+        overflow-y: auto;
+        background: rgba(9, 16, 27, 0.78);
+      }
+
+      .message {
+        display: flex;
+        margin-bottom: 14px;
+      }
+
+      .message span {
+        display: inline-block;
+        max-width: 78%;
+        padding: 12px 14px;
+        border-radius: 16px;
+        line-height: 1.7;
+        white-space: pre-wrap;
+      }
+
+      .message.user {
+        justify-content: flex-end;
+      }
+
+      .message.user span {
+        background: linear-gradient(135deg, rgba(124, 156, 255, 0.2), rgba(84, 210, 255, 0.14));
+        border: 1px solid rgba(124, 156, 255, 0.22);
+      }
+
+      .message.ai span {
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.06);
+      }
+
+      .chat-form {
+        display: flex;
+        gap: 12px;
+        padding: 16px 20px 20px;
+        border-top: 1px solid rgba(255,255,255,0.08);
+        background: rgba(11, 20, 33, 0.92);
+      }
+
+      .chat-form input {
+        flex: 1;
+        padding: 14px 16px;
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.02);
+        color: var(--text);
+      }
+
+      .chat-form button {
+        border: 0;
+        border-radius: 12px;
+        padding: 14px 18px;
+        background: linear-gradient(135deg, var(--primary), var(--primary-strong));
+        color: white;
+        font-weight: 700;
+        box-shadow: 0 12px 28px rgba(93, 125, 255, 0.35);
+      }
+
+      .prompt-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 16px;
+      }
+
+      .prompt-chip {
+        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.03);
+        color: var(--text);
+        border-radius: 999px;
+        padding: 9px 12px;
+      }
+
+      .provider-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .provider-btn {
+        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.02);
+        color: var(--muted);
+        padding: 8px 12px;
+        border-radius: 999px;
+      }
+
+      .provider-btn.active {
+        background: rgba(124, 156, 255, 0.12);
+        border-color: rgba(124, 156, 255, 0.2);
+        color: var(--text);
+      }
+
+      @media (max-width: 860px) {
+        .chat-layout {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="chat-page-shell">
+      <header class="chat-topbar">
+        <div class="brand">
+          <span class="brand-mark">N</span>
+          <span>NovaFlow</span>
+        </div>
+        <nav>
+          <a href="/index.html">首頁</a>
+          <a href="/dashboard.html">工作台</a>
+          <a href="/checkout.html">會員付款</a>
+        </nav>
+      </header>
+
+      <div class="chat-layout">
+        <aside class="side-panel">
+          <div class="side-title">AI 助理</div>
+          <div class="side-actions">
+            <a href="/chat.html" class="active">💬 開始對話</a>
+            <a href="/dashboard.html">📊 工作台</a>
+            <a href="/checkout.html">💳 方案付款</a>
+            <a href="/index.html">🏠 回首頁</a>
+          </div>
+
+          <div class="prompt-list">
+            <button class="prompt-chip" type="button">幫我整理高意願客戶名單</button>
+            <button class="prompt-chip" type="button">寫一個新產品 launch 文案</button>
+            <button class="prompt-chip" type="button">生成客服回覆模板</button>
+          </div>
+
+          <div class="provider-bar" aria-label="AI 模型選擇">
+            <button type="button" class="provider-btn active" data-provider="openai">OpenAI</button>
+            <button type="button" class="provider-btn active" data-provider="claude">Claude</button>
+            <button type="button" class="provider-btn active" data-provider="gemini">Gemini</button>
+            <button type="button" class="provider-btn active" data-provider="perplexity">Perplexity</button>
+            <button type="button" class="provider-btn active" data-provider="deepseek">DeepSeek</button>
+          </div>
+        </aside>
+
+        <main class="main-panel">
+          <div class="chat-panel" aria-live="polite">
+            <div class="chat-header">
+              <div>
+                <strong>NovaFlow AI</strong>
+                <small>在線營運助理</small>
+              </div>
+              <span class="status-pill">● 在線</span>
+            </div>
+            <div class="chat-body" id="chatBody">
+              <div class="message ai">
+                <span>您好！我可以協助你做客服自動化、銷售漏斗整理與行銷內容生成，告訴我你的情境即可。</span>
+              </div>
+            </div>
+            <form class="chat-form" id="chatForm">
+              <input id="chatInput" type="text" placeholder="輸入你的需求，例如：幫我建立 AI 客服流程..." aria-label="輸入訊息" />
+              <button type="submit">送出</button>
+            </form>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/service-worker.js').catch(() => {});
+        });
+      }
+
+      if (document.querySelector('.provider-btn') && document.getElementById('chatForm')) {
+        const providerButtons = document.querySelectorAll('.provider-btn');
+        const chatForm = document.getElementById('chatForm');
+        const chatInput = document.getElementById('chatInput');
+        const chatBody = document.getElementById('chatBody');
+
+        function appendMessage(role, text) {
+          const message = document.createElement('div');
+          message.className = `message ${role}`;
+          message.innerHTML = `<span>${text}</span>`;
+          chatBody.appendChild(message);
+          chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        providerButtons.forEach((button) => {
+          button.addEventListener('click', () => {
+            button.classList.toggle('active');
+          });
+        });
+
+        chatForm.addEventListener('submit', async (event) => {
+          event.preventDefault();
+          const value = chatInput.value.trim();
+          if (!value) return;
+
+          appendMessage('user', value);
+          chatInput.value = '';
+
+          try {
+            const response = await fetch('/api/chat', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ message: value, providers: ['gemini'], plan: 'guest' })
+            });
+            const data = await response.json();
+            appendMessage('ai', data.reply || '我先幫你整理出執行方案。');
+          } catch (error) {
+            appendMessage('ai', '這個方向很適合先鎖定目標客群，再把 AI 融入客服、CRM 或數據分析。');
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

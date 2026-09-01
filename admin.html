@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NovaFlow Admin</title>
+    <style>
+      :root { --bg: #07111f; --card: rgba(11,20,33,0.92); --line: rgba(142,182,255,0.18); --text: #edf4ff; --muted: #a8bbd9; --primary: #7c9cff; --primary-2: #54d2ff; --green:#8ef0d4; --pink:#ff7ec6; }
+      * { box-sizing: border-box; }
+      body { margin: 0; font-family: Inter, sans-serif; background: radial-gradient(circle at top left, rgba(124,156,255,0.18), transparent 20%), var(--bg); color: var(--text); }
+      .shell { width: min(1200px, calc(100% - 30px)); margin: 30px auto; }
+      .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+      .brand { display: flex; align-items: center; gap: 12px; font-weight: 800; }
+      .brand-mark { width: 34px; height: 34px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--primary), var(--green)); color: #07111f; }
+      .grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 18px; }
+      .card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 22px; }
+      .kpi { font-size: 2.2rem; font-weight: 800; }
+      .muted { color: var(--muted); }
+      table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+      th, td { padding: 14px 12px; border-bottom: 1px solid rgba(255,255,255,0.06); text-align: left; }
+      th { color: var(--muted); font-weight: 600; }
+      .badge { display: inline-block; padding: 6px 10px; border-radius: 999px; background: rgba(142,240,212,0.12); color: var(--green); }
+      .tx { background: rgba(124,156,255,0.08); color: var(--primary-2); }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <div class="top">
+        <div class="brand"><span class="brand-mark">N</span> NovaFlow Admin</div>
+        <a href="/dashboard.html" style="color: var(--text); text-decoration: none; padding: 10px 16px; border-radius: 12px; background: rgba(255,255,255,0.04); border: 1px solid var(--line);">回工作台</a>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <div class="muted">總營收</div>
+          <div class="kpi">NT$ 1.4M</div>
+        </div>
+        <div class="card">
+          <div class="muted">活躍會員</div>
+          <div class="kpi">1,286</div>
+        </div>
+        <div class="card">
+          <div class="muted">AI 轉換率</div>
+          <div class="kpi">32.4%</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 18px;">
+        <div class="muted" style="margin-bottom: 12px;">最新訂單</div>
+        <table>
+          <thead>
+            <tr><th>客戶</th><th>方案</th><th>金額</th><th>狀態</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>tim@aiworks.com</td><td>Growth</td><td>NT$ 12,900</td><td><span class="badge tx">已付款</span></td></tr>
+            <tr><td>angel@serviceco.tw</td><td>Starter</td><td>NT$ 2,900</td><td><span class="badge tx">已付款</span></td></tr>
+            <tr><td>leo@retailflow.biz</td><td>Enterprise</td><td>客製化</td><td><span class="badge">審核中</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>

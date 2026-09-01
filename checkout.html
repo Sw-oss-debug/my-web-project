@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NovaFlow 付款頁</title>
+    <style>
+      :root { --bg: #07111f; --bg-soft: #0d1b2d; --card: rgba(11,20,33,0.92); --line: rgba(142,182,255,0.18); --text: #edf4ff; --muted: #a8bbd9; --primary: #7c9cff; --primary-2: #54d2ff; --green:#8ef0d4; }
+      * { box-sizing: border-box; }
+      body { margin: 0; font-family: Inter, sans-serif; background: radial-gradient(circle at top left, rgba(124,156,255,0.18), transparent 20%), var(--bg); color: var(--text); min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+      .checkout { width: min(760px, calc(100% - 30px)); background: var(--card); border: 1px solid var(--line); border-radius: 24px; padding: 28px; box-shadow: 0 26px 60px rgba(22,35,77,0.35); }
+      .brand { display: flex; align-items: center; gap: 12px; font-size: 1.4rem; font-weight: 800; margin-bottom: 20px; }
+      .brand-mark { width: 36px; height: 36px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--primary), var(--green)); color: #07111f; }
+      .grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 20px; }
+      .box { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 18px; }
+      label { display: block; margin: 18px 0 8px; color: var(--muted); }
+      input, select { width: 100%; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; color: var(--text); padding: 12px 14px; }
+      .summary { display: grid; gap: 10px; }
+      .row { display: flex; justify-content: space-between; color: var(--muted); }
+      .row strong { color: var(--text); }
+      .total { margin-top: 12px; font-size: 1.4rem; font-weight: 800; }
+      .btn { margin-top: 22px; width: 100%; border: 0; padding: 14px 18px; border-radius: 12px; background: linear-gradient(135deg, var(--primary), var(--primary-2)); color: white; font-weight: 700; cursor: pointer; }
+      @media (max-width: 680px) { .grid { grid-template-columns: 1fr; } }
+    </style>
+  </head>
+  <body>
+    <div class="checkout">
+      <div class="brand"><span class="brand-mark">N</span> NovaFlow 付款</div>
+      <div class="grid">
+        <div class="box">
+          <h3>會員方案資訊</h3>
+          <label for="plan">選擇方案</label>
+          <select id="plan">
+            <option value="starter">Starter - NT$ 2,900 / 月</option>
+            <option value="growth" selected>Growth - NT$ 12,900 / 月</option>
+            <option value="enterprise">Enterprise - 客製化</option>
+          </select>
+
+          <label for="cardName">持卡人姓名</label>
+          <input id="cardName" placeholder="王小明" />
+
+          <label for="cardNumber">信用卡號</label>
+          <input id="cardNumber" placeholder="4242 4242 4242 4242" />
+        </div>
+
+        <div class="box summary">
+          <h3>付款摘要</h3>
+          <div class="row"><span>方案</span><strong id="planText">Growth</strong></div>
+          <div class="row"><span>費用</span><strong id="priceText">NT$ 12,900</strong></div>
+          <div class="row"><span>稅額</span><strong>NT$ 0</strong></div>
+          <div class="row total"><span>總金額</span><strong id="totalText">NT$ 12,900</strong></div>
+        </div>
+      </div>
+
+      <button class="btn" id="payBtn">確認付款</button>
+    </div>
+
+    <script>
+      const plan = document.getElementById('plan');
+      const planText = document.getElementById('planText');
+      const priceText = document.getElementById('priceText');
+      const totalText = document.getElementById('totalText');
+      const payBtn = document.getElementById('payBtn');
+
+      const planMap = {
+        starter: 2900,
+        growth: 12900,
+        enterprise: 0,
+      };
+
+      function updateSummary() {
+        const selected = plan.value;
+        const selectedName = selected === 'starter' ? 'Starter' : selected === 'enterprise' ? 'Enterprise' : 'Growth';
+        const amount = planMap[selected] || 12900;
+        planText.textContent = selectedName;
+        priceText.textContent = `NT$ ${new Intl.NumberFormat('zh-TW').format(amount)}`;
+        totalText.textContent = `NT$ ${new Intl.NumberFormat('zh-TW').format(amount)}`;
+      }
+
+      plan.addEventListener('change', updateSummary);
+      updateSummary();
+
+      payBtn.addEventListener('click', () => {
+        const email = localStorage.getItem('novaflowMember') || 'member@novaflow.ai';
+        fetch('/api/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, plan: plan.value })
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.ok) {
+              localStorage.setItem('novaflowMode', 'member');
+              localStorage.setItem('novaflowPlan', plan.value === 'starter' ? 'Starter' : plan.value === 'enterprise' ? 'Enterprise' : 'Growth');
+              alert('付款成功，會員已開通');
+              window.location.href = '/dashboard.html';
+            }
+          })
+          .catch(() => {
+            alert('付款成功（演示模式）');
+            window.location.href = '/dashboard.html';
+          });
+      });
+    </script>
+  </body>
+</html>

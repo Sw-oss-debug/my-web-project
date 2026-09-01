@@ -1,0 +1,36 @@
+{
+  "name": "novaflow-ai-saas",
+  "version": "1.0.0",
+  "private": true,
+  "description": "NovaFlow AI SaaS prototype with login, membership, and chat API",
+  "main": "main.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "app": "electron .",
+    "dist": "electron-builder --mac dmg"
+  },
+  "build": {
+    "appId": "com.novaflow.ai",
+    "productName": "NovaFlow",
+    "directories": {
+      "output": "dist"
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "artifactName": "NovaFlow-${version}.${ext}"
+    }
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "electron": "^44.1.0",
+    "electron-builder": "^26.15.3"
+  }
+}
